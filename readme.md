@@ -43,10 +43,10 @@ Application (with the embedded H2 database) is ready to be used ! You can access
 - Is the application running as expected
 - No performance issues
 
-#### Your experience in Java
+#### My experience in Java
 
-Please let us know more about your Java experience in a few sentences. For example:
-
-- I have 3 years experience in Java and I started to use Spring Boot from last year
-- I'm a beginner and just recently learned Spring Boot
-- I know Spring Boot very well and have been using it for many years
+I have a fair amount of experience with Java (and Kotlin) and Spring Boot (approximately 3 years on and off).
+As a person who has been in the technology/software consulting field for a while I have a wide breadth
+of experience in various stacks and I believe that many skills are transferable between languages and frameworks.
+As such I believe that the language being used is not important as long as the fundamentals are good and the
+final product is of high quality (and most importantly is working and maintainable).
