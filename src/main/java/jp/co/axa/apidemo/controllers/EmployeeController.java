@@ -1,54 +1,125 @@
 package jp.co.axa.apidemo.controllers;
 
+import javax.validation.Valid;
+
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.services.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jp.co.axa.apidemo.exceptions.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The EmployeeController class handles HTTP requests related to employee data.
+ */
 @RestController
 @RequestMapping("/api/v1")
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
+    private static final Logger LOG = LoggerFactory.getLogger(EmployeeController.class);
 
-    public void setEmployeeService(EmployeeService employeeService) {
+    private final EmployeeService employeeService;
+
+    /**
+     * Constructs an EmployeeController with the given EmployeeService.
+     *
+     * @param employeeService the EmployeeService to be used for employee operations
+     */
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
+    /**
+     * Retrieves a list of all employees.
+     *
+     * @return the list of employees
+     */
     @GetMapping("/employees")
     public List<Employee> getEmployees() {
-        List<Employee> employees = employeeService.retrieveEmployees();
-        return employees;
+        LOG.info("Retrieving all employees");
+        return employeeService.retrieveEmployees();
     }
 
+    /**
+     * Retrieves an employee by their ID.
+     *
+     * @param employeeId the ID of the employee to retrieve
+     * @return the employee with the specified ID
+     * @throws ResourceNotFoundException if the employee with the given ID is not found
+     */
     @GetMapping("/employees/{employeeId}")
-    public Employee getEmployee(@PathVariable(name="employeeId")Long employeeId) {
-        return employeeService.getEmployee(employeeId);
+    public Employee getEmployee(@PathVariable(name = "employeeId") Long employeeId) {
+        LOG.info("Retrieving employee with ID: {}", employeeId);
+        Employee employee = employeeService.getEmployee(employeeId);
+        if (employee == null) {
+            LOG.error("Employee not found with ID: {}", employeeId);
+            throw new ResourceNotFoundException("Employee not found with ID: " + employeeId);
+        }
+        return employee;
     }
 
+    /**
+     * Saves a new employee.
+     *
+     * @param employee the employee to be saved
+     * @return ResponseEntity with status and body message
+     */
     @PostMapping("/employees")
-    public void saveEmployee(Employee employee){
+    public ResponseEntity<String> saveEmployee(@Valid @RequestBody Employee employee) {
+        LOG.info("Saving new employee");
         employeeService.saveEmployee(employee);
-        System.out.println("Employee Saved Successfully");
+        LOG.info("Employee Saved Successfully");
+        return ResponseEntity.status(201).body("Employee Created Successfully");
     }
 
+    /**
+     * Deletes an employee by their ID.
+     *
+     * @param employeeId the ID of the employee to delete
+     * @return ResponseEntity with status and body message
+     */
     @DeleteMapping("/employees/{employeeId}")
-    public void deleteEmployee(@PathVariable(name="employeeId")Long employeeId){
-        employeeService.deleteEmployee(employeeId);
-        System.out.println("Employee Deleted Successfully");
+    public ResponseEntity<String> deleteEmployee(@PathVariable(name = "employeeId") Long employeeId) {
+        LOG.info("Deleting employee with ID: {}", employeeId);
+        Employee employee = employeeService.getEmployee(employeeId);
+        if (employee == null) {
+            LOG.error("Attempt to delete non-existing employee with ID: {}", employeeId);
+            throw new ResourceNotFoundException("Attempt to delete non-existing employee with ID: " + employeeId);
+        } else {
+            employeeService.deleteEmployee(employeeId);
+            LOG.info("Employee Deleted Successfully");
+            return ResponseEntity.ok().body("Employee Deleted Successfully");
+        }
     }
 
+    /**
+     * Updates an existing employee.
+     *
+     * @param employee   the updated employee data
+     * @param employeeId the ID of the employee to update
+     * @return ResponseEntity with status and body message
+     * @throws ResourceNotFoundException if the employee with the given ID is not found
+     */
     @PutMapping("/employees/{employeeId}")
-    public void updateEmployee(@RequestBody Employee employee,
-                               @PathVariable(name="employeeId")Long employeeId){
-        Employee emp = employeeService.getEmployee(employeeId);
-        if(emp != null){
-            employeeService.updateEmployee(employee);
+    public ResponseEntity<String> updateEmployee(@Valid @RequestBody Employee employee,
+                                                 @PathVariable(name = "employeeId") Long employeeId) {
+        LOG.info("Updating employee with ID: {}", employeeId);
+        if (!employeeId.equals(employee.getId())) {
+            LOG.error("Mismatched employee IDs in request. Path variable ID: {}, Employee object ID: {}", employeeId, employee.getId());
+            throw new IllegalArgumentException("Mismatched employee IDs in request");
         }
 
+        Employee emp = employeeService.getEmployee(employeeId);
+        if (emp != null) {
+            employeeService.updateEmployee(employee);
+            LOG.info("Employee Updated Successfully");
+            return ResponseEntity.ok().body("Employee Updated Successfully");
+        } else {
+            LOG.error("Attempt to update non-existing employee with ID: {}", employeeId);
+            throw new ResourceNotFoundException("Attempt to update non-existing employee with ID: " + employeeId);
+        }
     }
-
 }
