@@ -1,6 +1,7 @@
 package jp.co.axa.apidemo.unit.controllers;
 
 import jp.co.axa.apidemo.entities.Employee;
+import jp.co.axa.apidemo.exceptions.EmployeeNotFoundException;
 import jp.co.axa.apidemo.services.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,9 +70,10 @@ public class EmployeeControllerTest {
         verify(employeeService, times(1)).getEmployee(1L);
     }
 
+
     @Test
     public void getEmployee_notFound() throws Exception {
-        when(employeeService.getEmployee(1L)).thenReturn(null);
+        when(employeeService.getEmployee(1L)).thenThrow(new EmployeeNotFoundException("Employee not found"));
 
         mockMvc.perform(get("/api/v1/employees/{employeeId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -101,13 +103,16 @@ public class EmployeeControllerTest {
         verify(employeeService, times(1)).deleteEmployee(1L);
     }
 
+
     @Test
     public void deleteEmployee_notFound() throws Exception {
-        when(employeeService.getEmployee(1L)).thenReturn(null);
+        when(employeeService.getEmployee(1L)).thenThrow(new EmployeeNotFoundException("Employee not found"));
 
         mockMvc.perform(delete("/api/v1/employees/{employeeId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+
+        verify(employeeService, times(1)).getEmployee(1L);
     }
 
     @Test
@@ -124,14 +129,14 @@ public class EmployeeControllerTest {
 
     @Test
     public void updateEmployee_notFound() throws Exception {
-        when(employeeService.getEmployee(1L)).thenReturn(null);
+        doThrow(new EmployeeNotFoundException("Employee not found"))
+                .when(employeeService).updateEmployee(any(Employee.class));
 
         mockMvc.perform(put("/api/v1/employees/{employeeId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"id\": 1, \"name\": \"Jane Doe\", \"salary\": 2000, \"department\": \"HR\" }"))
                 .andExpect(status().isNotFound());
 
-        verify(employeeService, times(0)).updateEmployee(any(Employee.class));  // updateEmployee should not be called
+        verify(employeeService, times(1)).updateEmployee(any(Employee.class));
     }
 }
-
