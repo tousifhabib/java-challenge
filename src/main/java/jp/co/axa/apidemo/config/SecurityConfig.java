@@ -25,17 +25,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * Configures the global authentication manager to use the custom user details service and password encoder.
+     *
+     * @param auth The AuthenticationManagerBuilder to configure.
+     * @throws Exception if an error occurs during the configuration.
+     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
 
+    /**
+     * Configures the password encoder used for password hashing.
+     *
+     * @return The configured PasswordEncoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures the HttpSecurity for request authorization and session management.
+     *
+     * @param http The HttpSecurity to configure.
+     * @throws Exception if an error occurs during the configuration.
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -58,6 +75,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
+    /**
+     * Exposes the AuthenticationManager bean.
+     *
+     * @return The AuthenticationManager bean.
+     * @throws Exception if an error occurs while creating the bean.
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
