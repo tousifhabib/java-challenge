@@ -139,4 +139,35 @@ public class EmployeeControllerTest {
 
         verify(employeeService, times(1)).updateEmployee(any(Employee.class));
     }
+
+    @Test
+    public void saveEmployee_invalidData() throws Exception {
+        mockMvc.perform(post("/api/v1/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"salary\": 1000, \"department\": \"IT\" }"))
+                .andExpect(status().isBadRequest());
+
+        verify(employeeService, times(0)).saveEmployee(any(Employee.class));
+    }
+
+    @Test
+    public void updateEmployee_invalidData() throws Exception {
+        when(employeeService.getEmployee(1L)).thenReturn(employee);
+
+        mockMvc.perform(put("/api/v1/employees/{employeeId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"id\": 1, \"salary\": 2000, \"department\": \"HR\" }"))
+                .andExpect(status().isBadRequest());
+
+        verify(employeeService, times(0)).updateEmployee(any(Employee.class));
+    }
+
+    @Test
+    public void getEmployee_invalidId() throws Exception {
+        mockMvc.perform(get("/api/v1/employees/{employeeId}", "invalid")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verify(employeeService, times(0)).getEmployee(anyLong());
+    }
 }
