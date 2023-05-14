@@ -53,16 +53,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * Save an employee.
+     * Saves an employee.
      *
-     * @param employee the employee to save
+     * @param employee the employee to be saved
+     * @return the saved employee object
      */
     @Override
     @Transactional
-    public void saveEmployee(Employee employee) {
+    public Employee saveEmployee(Employee employee) {
         try {
             LOGGER.info("Saving employee: " + employee);
-            employeeRepository.save(employee);
+            Employee savedEmployee = employeeRepository.save(employee);
+            return savedEmployee;
         } catch (Exception e) {
             LOGGER.error("Error occurred while saving employee: ", e);
             throw e;

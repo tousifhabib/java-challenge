@@ -30,8 +30,9 @@ public interface EmployeeService {
      * Save an employee.
      *
      * @param employee the employee to save
+     * @return
      */
-    public void saveEmployee(Employee employee);
+    public Employee saveEmployee(Employee employee);
 
     /**
      * Delete an employee by their id.

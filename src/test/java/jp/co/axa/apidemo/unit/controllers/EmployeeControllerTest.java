@@ -90,10 +90,20 @@ public class EmployeeControllerTest {
     @Test
     @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void saveEmployee() throws Exception {
+        Employee employee = new Employee();
+        employee.setName("John Doe");
+        employee.setSalary(1000);
+        employee.setDepartment("IT");
+
+        when(employeeService.saveEmployee(any(Employee.class))).thenReturn(employee);
+
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"name\": \"John Doe\", \"salary\": 1000, \"department\": \"IT\" }"))
-                .andExpect(status().isCreated());  // Change this line
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", is("John Doe")))
+                .andExpect(jsonPath("$.salary", is(1000)))
+                .andExpect(jsonPath("$.department", is("IT")));
 
         verify(employeeService, times(1)).saveEmployee(any(Employee.class));
     }

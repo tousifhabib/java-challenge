@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -66,17 +68,23 @@ public class EmployeeController {
     }
 
     /**
-     * Saves a new employee.
+     * Saves an employee.
      *
      * @param employee the employee to be saved
-     * @return ResponseEntity with status 201 (Created) and a success message in the body
+     * @return the saved employee object
      */
     @PostMapping("/employees")
-    public ResponseEntity<String> saveEmployee(@Valid @RequestBody Employee employee) {
+    public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody Employee employee) {
         LOG.info("Saving new employee");
-        employeeService.saveEmployee(employee);
+        Employee savedEmployee = employeeService.saveEmployee(employee);
         LOG.info("Employee Saved Successfully");
-        return ResponseEntity.status(201).body("Employee Created Successfully");
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedEmployee.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(savedEmployee);
     }
 
     /**
