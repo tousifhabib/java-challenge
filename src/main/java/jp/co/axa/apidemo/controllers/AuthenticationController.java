@@ -23,6 +23,13 @@ public class AuthenticationController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    /**
+     * Creates an authentication token for the provided credentials.
+     *
+     * @param authenticationRequest The authentication request containing the username and password.
+     * @return ResponseEntity containing the authentication response with a JWT token.
+     * @throws Exception if an error occurs during the authentication process.
+     */
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
