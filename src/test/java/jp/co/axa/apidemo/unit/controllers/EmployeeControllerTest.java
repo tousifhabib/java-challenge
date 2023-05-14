@@ -183,4 +183,46 @@ public class EmployeeControllerTest {
 
         verify(employeeService, times(0)).getEmployee(anyLong());
     }
+    @Test
+    public void getEmployees_unauthenticated() throws Exception {
+        mockMvc.perform(get("/api/v1/employees")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void saveEmployee_unauthenticated() throws Exception {
+        mockMvc.perform(post("/api/v1/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"name\": \"John Doe\", \"salary\": 1000, \"department\": \"IT\" }"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void getEmployee_unauthenticated() throws Exception {
+        mockMvc.perform(get("/api/v1/employees/{employeeId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+
+        verify(employeeService, times(0)).getEmployee(anyLong());
+    }
+
+    @Test
+    public void updateEmployee_unauthenticated() throws Exception {
+        mockMvc.perform(put("/api/v1/employees/{employeeId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"id\": 1, \"name\": \"Jane Doe\", \"salary\": 2000, \"department\": \"HR\" }"))
+                .andExpect(status().isForbidden());
+
+        verify(employeeService, times(0)).updateEmployee(any(Employee.class));
+    }
+
+    @Test
+    public void deleteEmployee_unauthenticated() throws Exception {
+        mockMvc.perform(delete("/api/v1/employees/{employeeId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+
+        verify(employeeService, times(0)).deleteEmployee(anyLong());
+    }
 }
