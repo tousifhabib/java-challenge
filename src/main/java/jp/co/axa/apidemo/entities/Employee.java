@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name="EMPLOYEE")
@@ -27,6 +28,7 @@ public class Employee {
     @Setter
     @NotNull(message = "Name cannot be null")
     @Size(min = 1, max = 50, message = "Name must be between 1 and 50 characters")
+    @Pattern(regexp="^[a-zA-Z ]*$", message="Name can only contain alphabetic characters and spaces")
     @Column(name="EMPLOYEE_NAME")
     private String name;
 
@@ -41,6 +43,7 @@ public class Employee {
     @Setter
     @NotNull(message = "Department cannot be null")
     @Size(min = 1, max = 50, message = "Department must be between 1 and 50 characters")
+    @Pattern(regexp="^[a-zA-Z ]*$", message="Department can only contain alphabetic characters and spaces")
     @Column(name="DEPARTMENT")
     private String department;
 
