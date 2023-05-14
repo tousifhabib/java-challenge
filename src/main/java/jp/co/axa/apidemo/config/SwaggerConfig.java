@@ -21,6 +21,11 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
+    /**
+     * Configures and returns the Docket for Swagger API documentation.
+     *
+     * @return The configured Docket for Swagger.
+     */
     @Bean
     public Docket apiDocket() {
         return new Docket(DocumentationType.SWAGGER_2)
