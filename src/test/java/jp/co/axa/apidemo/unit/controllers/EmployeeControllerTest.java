@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -44,6 +46,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void getEmployees() throws Exception {
         when(employeeService.retrieveEmployees()).thenReturn(Arrays.asList(employee));
 
@@ -58,6 +61,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void getEmployee() throws Exception {
         when(employeeService.getEmployee(1L)).thenReturn(employee);
 
@@ -72,6 +76,7 @@ public class EmployeeControllerTest {
 
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void getEmployee_notFound() throws Exception {
         when(employeeService.getEmployee(1L)).thenThrow(new EmployeeNotFoundException("Employee not found"));
 
@@ -83,6 +88,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void saveEmployee() throws Exception {
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,6 +99,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void deleteEmployee() throws Exception {
         when(employeeService.getEmployee(1L)).thenReturn(employee);
 
@@ -105,6 +112,7 @@ public class EmployeeControllerTest {
 
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void deleteEmployee_notFound() throws Exception {
         when(employeeService.getEmployee(1L)).thenThrow(new EmployeeNotFoundException("Employee not found"));
 
@@ -116,6 +124,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void updateEmployee() throws Exception {
         when(employeeService.getEmployee(1L)).thenReturn(employee);
 
@@ -128,6 +137,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void updateEmployee_notFound() throws Exception {
         doThrow(new EmployeeNotFoundException("Employee not found"))
                 .when(employeeService).updateEmployee(any(Employee.class));
@@ -141,6 +151,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void saveEmployee_invalidData() throws Exception {
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -151,6 +162,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void updateEmployee_invalidData() throws Exception {
         when(employeeService.getEmployee(1L)).thenReturn(employee);
 
@@ -163,6 +175,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void getEmployee_invalidId() throws Exception {
         mockMvc.perform(get("/api/v1/employees/{employeeId}", "invalid")
                         .contentType(MediaType.APPLICATION_JSON))
