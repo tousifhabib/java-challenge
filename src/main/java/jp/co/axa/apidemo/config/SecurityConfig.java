@@ -56,8 +56,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf()
+                .ignoringAntMatchers("/h2-console/**")
+                .and()
+                .headers()
+                .frameOptions().sameOrigin()
+                .and()
                 .exceptionHandling().and()
-                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/authenticate").permitAll()
                 .antMatchers(
@@ -67,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/configuration/security",
                         "/swagger-ui.html",
                         "/webjars/**").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
