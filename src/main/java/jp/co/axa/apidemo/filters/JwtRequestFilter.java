@@ -25,6 +25,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
+    /**
+     * Filters incoming requests to validate and set the authentication context based on the JWT token.
+     *
+     * @param request  The incoming HttpServletRequest.
+     * @param response The outgoing HttpServletResponse.
+     * @param chain    The FilterChain to continue the request processing.
+     * @throws ServletException If an error occurs during the filter processing.
+     * @throws IOException      If an I/O error occurs during the filter processing.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
